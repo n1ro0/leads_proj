@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+{% load bootstrap %}
+
+{% block title %}Lead Update{% endblock %}
+
+{% block custom_styles %}
+  <style>
+    .radio {
+      display: inline-block;
+      margin-right: 5px;
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+  <form action="" method="post" class="form-horizontal" role="form">{% csrf_token %}
+
+
+    <div class="form-group {% if form.errors.name %}has-error{% endif %}">
+      <div class="col-sm-2 ">
+        <label for="{{ form.name.id_for_label }}" class="control-label ">{{ form.name.label }}</label>
+      </div>
+      <div class="col-sm-10 ">
+        {{ form.name }}
+        {% for error in form.errors.name %}
+          <span class="help-block">{{ error|escape }}</span>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="form-group {% if form.errors.gender %}has-error{% endif %}">
+      <div class="col-sm-2 ">
+        <label for="{{ form.gender.id_for_label }} " class="control-label ">{{ form.gender.label }}</label>
+      </div>
+      <div class="col-sm-10 ">
+        {% for item in form.gender %}
+          {{ item.tag }}
+          <label>{{ item.choice_label }}</label>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="form-group">
+      {{ formset.management_form }}
+      {% for language_form in formset %}
+        <div class="col-sm-2">
+          <label for="languages" class="control-label">{% if forloop.first %}Languages{% endif %}</label>
+        </div>
+        <div class="col-sm-10">
+          <div class="input-group">
+
+            <input type="text" class="form-control" name="{{ language_form.name.html_name }}" id="languages"
+                   placeholder="{% if forloop.last %}English{% else %}Chinese{% endif %}" {% if language_form.name.value %}value="{{ language_form.name.value }}{% endif %}">
+            {% if forloop.last %}
+              <span class="input-group-btn"><button class="btn"><i class="fa fa-plus fa-fw"></i>Add</button></span>
+            {% else %}
+              <span class="input-group-btn"><button class="btn"><i class="fa fa-remove fa-fw"></i>Remove</button></span>
+            {% endif %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
+    <div class="form-group {% if form.errors.card_number %}has-error{% endif %}">
+      <div class="col-sm-2 ">
+        <label for="{{ form.card_number.id_for_label }} " class="control-label ">{{ form.card_number.label }}</label>
+      </div>
+      <div class="col-sm-10 ">
+        {{ form.card_number }}
+        {% for error in form.errors.card_number %}
+          <span class="help-block">{{ error|escape }}</span>
+        {% endfor %}
+      </div>
+    </div>
+    <div
+        class="form-group {% if form.errors.expiry_date %}has-error{% endif %}{% if form.non_field_errors %}has-error{% endif %}">
+      <div class="col-sm-2 ">
+        <label for="{{ form.expiry_date.id_for_label }} " class="control-label ">{{ form.expiry_date.label }}</label>
+      </div>
+      <div class="col-sm-10 ">
+        {{ form.expiry_date }}
+        {% for error in form.non_field_errors %}
+          <span class="help-block">{{ error|escape }}</span>
+        {% endfor %}
+
+        {% for error in form.errors.expiry_date %}
+          <span class="help-block">{{ error|escape }}</span>
+        {% endfor %}
+      </div>
+    </div>
+    <div class="form-group">
+      <div class="col-sm-2 ">
+        <label for="{{ form.professional.id_for_label }} " class="control-label ">{{ form.professional.label }}</label>
+      </div>
+      <div class="col-sm-10 ">
+        {% for item in form.professional %}
+          {{ item.tag }}
+          <label>{{ item.choice_label }}</label>
+        {% endfor %}
+      </div>
+    </div>
+    <div class="form-group {% if form.errors.name %}has-error{% endif %}">
+      <div class="col-sm-offset-2 col-sm-10 ">
+        <button type="submit" class="btn btn-default ">
+          <i class="fa fa-save fa-fw "></i>Submit
+        </button>
+      </div>
+    </div>
+  </form>
+{% endblock %}
+{% block custom_js %}
+  <script>
+      $(document).ready(function () {
+          $(function () {
+              $(".datepicker").datepicker({
+                  dateFormat: "yy-mm-dd",
+                  beforeShow: function () {
+                      setTimeout(function () {
+                          $('.ui-datepicker').css('z-index', 5);
+                      }, 0);
+                  }
+              });
+          });
+      })
+  </script>
+{% endblock %}

@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+
+{% block title %}Leads List{% endblock %}
+
+{% block content %}
+
+  <div class="row">
+    <div class="col-md-12">
+      <ul class="breadcrumb">
+        <li>
+          <a href="#">Home</a>
+        </li>
+        <li class="active">Tour Leads</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-12">
+      <a class="btn btn-primary" href="{% url 'leads:create' %}"><i class="fa fa-plus fa-fw"></i>Add Lead</a>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-12">
+    <form action="{% url 'leads:delete-all' %}" method="post" id="delete_items">{% csrf_token %}
+      <table class="table">
+        <thead>
+        <tr class="active">
+          <th>Choose</th>
+          <th>Operation</th>
+          <th>Name</th>
+          <th>Gender</th>
+          <th>Card Number</th>
+          <th>Expire Date</th>
+          <th>Languages</th>
+          <th>Professional</th>
+        </tr>
+        </thead>
+          <tbody>
+          {% for lead in object_list %}
+            <tr>
+              <td>
+                <input type="checkbox" name="delete" value="{{ lead.pk }}">
+              </td>
+              <td>
+                <a href="{% url 'leads:update' lead.pk %}">Edit</a>|
+                <a href="{% url 'leads:delete' lead.pk %}">Delete</a>
+              </td>
+              <td>
+                <a href="{% url 'leads:detail' lead.pk %}">{{ lead.name }}</a>
+              </td>
+              <td>{{ lead.get_gender_display }}</td>
+              <td>{{ lead.card_number }}</td>
+              <td>{{ lead.expiry_date|date:"Y-m-d" }}</td>
+              <td>
+                {% for language in lead.languages.all %}
+                  {% if forloop.last %}
+                    <span>{{ language.name }}</span>
+                  {% else %}
+                    <span>{{ language.name }}, </span>
+                  {% endif %}
+                {% endfor %}
+              </td>
+              <td>{{ lead.get_professional_display }}</td>
+            </tr>
+          {% endfor %}
+          </tbody>
+      </table>
+    </form>
+    </div>
+  </div>
+
+  <div class="row ">
+
+    <div class="col-md-3 ">
+      <input type="checkbox" id="select_all">Select All
+      <button class="btn btn-primary pull-right submit"><i class="fa fa-remove
+                    fa-fw "></i>Delete
+      </button>
+    </div>
+
+
+    <div class="col-md-9 ">
+      {% if is_paginated %}
+        <ul class="pagination pull-right ">
+          {% if page_obj.has_previous %}
+            <li>
+              <a href="?page={{ page_obj.previous_page_number }}">Prev</a>
+            </li>
+
+          {% endif %}
+          {% for page_number in page_obj.paginator.page_range %}
+            <li {% if page_obj.number == page_number %}class="active"{% endif %}>
+              <a href="?page={{ page_number }}">{{ page_number }}</a>
+            </li>
+          {% endfor %}
+
+          {% if page_obj.has_next %}
+            <li>
+              <a href="?page={{ page_obj.next_page_number }}">Next</a>
+            </li>
+          {% endif %}
+        </ul>
+      {% endif %}
+
+    </div>
+  </div>
+
+{% endblock %}
+
+{% block custom_js %}
+  <script>
+      $(document).ready(function () {
+          $('#select_all').change(function () {
+              $('input:checkbox').prop('checked', $(this).prop("checked"));
+          });
+          $('.submit').click(function () {
+              $("#delete_items").submit();
+          })
+      })
+  </script>
+{% endblock %}
